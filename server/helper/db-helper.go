@@ -16,7 +16,7 @@ func ConnectToDatabase() *sql.DB {
 		dbname   = "test"
 	)
 	// psql := fmt.Sprintf("host=%s port=%d user=%s"+" password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
-	url := fmt.Sprintf("postgres://%v:%v@postgres:%v/%v?sslmode=disable",
+	url := fmt.Sprintf("postgres://%v:%v@host.docker.internal:%v/%v?sslmode=disable",
 		user, password, port, dbname)
 	fmt.Println(url)
 	Db, err := sql.Open("postgres", url)

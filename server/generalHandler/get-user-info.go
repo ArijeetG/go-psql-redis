@@ -48,6 +48,7 @@ func GetUserInfo(c *gin.Context) {
 	switch v := isDataPresent.(type) {
 	case bool:
 		if v {
+			log.Println("Value found in cache ...")
 			// IF VALUE IS NOT PRESENT IN CACHE
 			query := `SELECT "name", "user_type", "address", "phone" FROM "user" WHERE name=$1`
 			fmt.Println("QUERY: ", query)
@@ -66,12 +67,14 @@ func GetUserInfo(c *gin.Context) {
 					log.Panic(err.Error())
 					return
 				}
-				fmt.Println(u.name, u.user_type)
 				responseBody = append(responseBody, map[string]interface{}{
 					"name":      u.name,
 					"user_type": u.user_type,
+					"address":   u.address,
+					"phone":     u.phone,
 				})
 			}
+			fmt.Println(responseBody)
 			marshalRequestBody, err := json.Marshal(responseBody)
 			if len(responseBody) > 0 {
 				r := helper.SetCache(cacheClient, ctx, requestBody.Name, marshalRequestBody)
@@ -82,6 +85,12 @@ func GetUserInfo(c *gin.Context) {
 					return
 				}
 
+			}
+			if len(responseBody) == 0 {
+				c.JSON(400, gin.H{
+					"message": "no_records",
+				})
+				return
 			}
 			c.JSON(200, gin.H{
 				"message":  "OK",
@@ -95,9 +104,15 @@ func GetUserInfo(c *gin.Context) {
 		}
 	case string:
 		fmt.Println(string(v))
+		var r []map[string]interface{}
+		err := json.Unmarshal([]byte(v), &r)
+		if err != nil {
+			log.Println(err)
+		}
+
 		c.JSON(200, gin.H{
 			"message":  "OK",
-			"response": v,
+			"response": r,
 		})
 	default:
 		c.JSON(500, gin.H{

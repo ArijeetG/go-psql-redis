@@ -10,7 +10,7 @@ import (
 
 func GetCacheClient() *redis.Client {
 	rdb := redis.NewClient(&redis.Options{
-		Addr:     "redis:6379",
+		Addr:     "host.docker.internal:6379",
 		Password: "password",
 		DB:       0,
 	})

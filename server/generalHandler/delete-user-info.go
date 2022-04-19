@@ -46,12 +46,15 @@ func DeleteUserInfo(c *gin.Context) {
 	if err != nil {
 		log.Panic(err.Error())
 	}
+
 	var responseBody []map[string]interface{}
+
 	for resp.Next() {
 		var b user
 		if err := resp.Scan(&b.name, &b.user_type, &b.password); err != nil {
-			log.Panic(err.Error())
+			log.Panic(err)
 		}
+
 		log.Println("parsing ", b)
 		err := bcrypt.CompareHashAndPassword([]byte(b.password), []byte(requestBody.Password))
 		if err != nil {
@@ -61,11 +64,13 @@ func DeleteUserInfo(c *gin.Context) {
 			})
 			return
 		}
+
 		responseBody = append(responseBody, map[string]interface{}{
 			"name":      b.name,
 			"user_type": b.user_type,
 		})
 	}
+
 	if len(responseBody) == 0 {
 		c.JSON(400, gin.H{
 			"message": "user_not_present",
@@ -82,6 +87,7 @@ func DeleteUserInfo(c *gin.Context) {
 		})
 		return
 	}
+
 	cacheClient.Del(ctx, requestBody.Name)
 	c.JSON(200, gin.H{
 		"message": "OK",
