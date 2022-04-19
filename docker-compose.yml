@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+  admin:
+    container_name: server
+    build: ./server
+    ports:
+      - 4000:4000
+    restart: on-failure
+
+  postgres:
+    container_name: postgres
+    build: ./database
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=secret
+    # environment:
+    #   - POSTGRES_PASSWORD=secret
+    #   - POSTGRES_DB=test
+    ports:
+      - '5432:5432'
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: arijeetghosh251@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: secret
+    depends_on:
+      - postgres
+    ports:
+      - "5050:80"
+    restart: unless-stopped
+
+  cache:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning --requirepass password

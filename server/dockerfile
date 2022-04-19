@@ -1,0 +1,13 @@
+FROM golang:alpine
+
+WORKDIR $GOPATH/src/server
+
+ADD . ./
+
+
+RUN go build -o server .
+RUN chmod 777 server
+
+EXPOSE 4000
+
+ENTRYPOINT ["./server"]
