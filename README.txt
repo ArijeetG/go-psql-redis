@@ -46,5 +46,7 @@ routes:
 
 setup:
     -> clone the repository
-    -> go to root directory and run docker compose up
+    -> go to /database and run docker compose up
+    -> go to /redis and run docker compose up
+    -> go to /server and run docker compose up
     -> endpoints will be accessible at http://localhost:4000/
