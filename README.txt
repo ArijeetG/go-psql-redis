@@ -44,3 +44,7 @@ routes:
                 "Password": <password>
             }
 
+setup:
+    -> clone the repository
+    -> go to root directory and run docker compose up
+    -> endpoints will be accessible at http://localhost:4000/
